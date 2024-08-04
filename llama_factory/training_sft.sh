@@ -19,16 +19,13 @@ fi
 
 
 # dataset
-DATA_SFT_general=/data/licheng/data-text/train_data_20240703/train/general
-DATA_SFT_ray=/data/licheng/data-text/train_data_20240703/train/ray
-DATA_SFT_system=/data/licheng/data-text/train_data_20240703/train/system
-DATA_PRETRAIN=/data/licheng/data-text/train_data_20240703/train/pretrain
-DATA_PATH=$DATA_SFT_general,$DATA_SFT_ray,$DATA_SFT_system,$DATA_PRETRAIN
+DATA_PATH=/data/licheng/data-text/train_data_20240315/
+DATA_NAME=ray,system,pretrain
 
 
 # config param
 model_name=/mnt/ceph/huggingface_model_hub/Meta-Llama-3-8B-Instruct
-deepspeed_config=/data/licheng/LLM_code/training_scripts/deepspeed/ds_z0_config.json
+deepspeed_config=llama_factory/deepspeed/ds_z0_config.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
@@ -41,9 +38,11 @@ finetuning_type: full
 deepspeed: $deepspeed_config
 
 ### dataset
-dataset: $DATA_PATH
+dataset: $DATA_NAME
+dataset_dir: $DATA_PATH
+packing: true
 template: llama3
-cutoff_len: 1024
+cutoff_len: 100
 max_samples: 1000
 overwrite_cache: true
 preprocessing_num_workers: 16
