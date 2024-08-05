@@ -42,7 +42,7 @@ dataset: $DATA_NAME
 dataset_dir: $DATA_PATH
 packing: true
 template: llama3
-cutoff_len: 100
+cutoff_len: 2048
 max_samples: 1000
 overwrite_cache: true
 preprocessing_num_workers: 16
