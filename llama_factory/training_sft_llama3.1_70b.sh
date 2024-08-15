@@ -2,13 +2,13 @@
 
 
 # task param
-model_name=llama3_8b
+model_name=llama3.1_8b
 job_name=ray_gpt_2408_v1
-task_name=test
+task_name=debug
 
 
 # dir param
-TRAINING_PATH=/data/licheng/chat_model/sft/$model_name/$dataset/$job_name
+TRAINING_PATH=/mnt/ceph/licheng/chat_model/sft/$model_name/$job_name
 TIME=$(date "+%Y-%m-%d_%H:%M:%S")
 logfile=${TRAINING_PATH}/${TIME}.log
 echo $TIME
@@ -19,13 +19,13 @@ fi
 
 
 # dataset
-DATA_PATH=/data/licheng/data-text/train_data_20240315/
-DATA_NAME=ray,system,pretrain
+DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240815/
+DATA_NAME=ray,general,system,pretrain_ray,pretrain_general
 
 
 # config param
-model_name=/mnt/ceph/huggingface_model_hub/Meta-Llama-3-8B-Instruct
-deepspeed_config=llama_factory/deepspeed/ds_z0_config.json
+model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
+deepspeed_config=llama_factory/deepspeed/ds_z1_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
@@ -43,7 +43,7 @@ dataset_dir: $DATA_PATH
 packing: true
 template: llama3
 cutoff_len: 2048
-max_samples: 1000
+max_samples: 2000
 overwrite_cache: true
 preprocessing_num_workers: 16
 
@@ -131,6 +131,6 @@ gpu_address="$node_1_address@$node_2_address@$node_3_address@$node_5_address@$no
 master_port=2223
 
 # run
-export NPROC_PER_NODE=2; llamafactory-cli train_ds $config_yaml
+export NPROC_PER_NODE=8; llamafactory-cli train_ds $config_yaml
 # export HOST_FILE=$hostfile; export GPU_ADDRESS=$gpu_address; export MASTER_PORT=$master_port; llamafactory-cli train_ds $config_yaml
 # llamafactory-cli train $config_yaml
