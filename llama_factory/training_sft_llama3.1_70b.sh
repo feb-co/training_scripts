@@ -2,9 +2,9 @@
 
 
 # task param
-model_name=llama3.1_8b
+model_name=llama3.1_70b
 job_name=ray_gpt_2408_v1
-task_name=debug
+task_name=sft_mix
 
 
 # dir param
@@ -26,7 +26,7 @@ BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240815/
 
 # config param
 model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
-deepspeed_config=llama_factory/deepspeed/ds_z3_bf16_cpuoffload_paramoffload.json
+deepspeed_config=llama_factory/deepspeed/ds_z1_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
@@ -52,8 +52,8 @@ neat_packing: true
 
 ### output
 output_dir: $TRAINING_PATH
-logging_steps: 10
-save_steps: 10
+logging_steps: 1
+save_steps: 300
 plot_loss: true
 overwrite_output_dir: true
 
@@ -62,7 +62,7 @@ weight_decay: 1.0e-6
 disable_tqdm: true
 
 ### train
-per_device_train_batch_size: 1
+per_device_train_batch_size: 2
 gradient_accumulation_steps: 2
 learning_rate: 5.0e-6
 num_train_epochs: 3.0
@@ -83,64 +83,40 @@ EOT
 
 
 # env param
-export NCCL_IB_DISABLE=0
-export NCCL_IB_HCA=^mlx5_bond_0
-export NCCL_IB_CUDA_SUPPORT=1
-export NCCL_IB_GID_INDEX=3
-export NCCL_DEBUG=WARN
-export PDSH_RCMD_TYPE='ssh'
-# export LD_LIBRARY_PATH='/data/anaconda3/envs/licheng/lib/python3.8/site-packages/torch/lib/:/data/anaconda3/envs/licheng/lib'
+ENV_FILE=$TRAINING_PATH/env
+cat <<EOT > $ENV_FILE
+NCCL_IB_DISABLE=0
+NCCL_IB_HCA=^mlx5_bond_0
+NCCL_IB_CUDA_SUPPORT=1
+NCCL_IB_GID_INDEX=3
+NCCL_IB_RETRY_CNT=28
+NCCL_IB_TIMEOUT=22
+NCCL_DEBUG=WARN
+LD_LIBRARY_PATH=/home/dfo/.conda/envs/feb_platform/lib/python3.8/site-packages/torch/lib/:/home/dfo/.conda/envs/feb_platform/lib
+TORCH_EXTENSIONS_DIR=/mnt/ceph/.cache/torch_extensions/py311_cu121
+CUDA_HOME=/home/dfo/.conda/envs/feb_platform/
+EOT
 
-export NCCL_IB_RETRY_CNT=28
-export NCCL_IB_TIMEOUT=22
-
-# distribute param
-node_1='10.10.1.11'
-node_2='10.10.1.12'
-node_3='10.10.1.13'
-node_4='10.10.1.14'
-node_5='10.10.1.15'
-node_6='10.10.1.16'
-node_7='10.10.1.17'
-node_8='10.10.1.18'
-node_9='10.10.1.19'
-node_10='10.10.1.20'
-node_11='10.10.1.21'
-node_12='10.10.1.22'
-
+NUM_NODES=11
 hostfile=$TRAINING_PATH/hostfile
 cat << EOF > $hostfile
-localhost slots=8
-$node_1 slots=8
-$node_2 slots=8
-$node_3 slots=8
-$node_5 slots=8
-$node_6 slots=8
-$node_7 slots=8
-$node_8 slots=8
-$node_9 slots=8
-$node_10 slots=8
-$node_11 slots=8
-$node_12 slots=8
+10.10.1.11
+dfo@10.10.1.12
+dfo@10.10.1.13
+dfo@10.10.1.15
+dfo@10.10.1.16
+dfo@10.10.1.17
+dfo@10.10.1.18
+dfo@10.10.1.19
+dfo@10.10.1.20
+dfo@10.10.1.21
+dfo@10.10.1.22
 EOF
 
-node_1_address="$node_1:0,1,2,3,4,5,6,7"
-node_2_address="$node_2:0,1,2,3,4,5,6,7"
-node_3_address="$node_3:0,1,2,3,4,5,6,7"
-node_4_address="$node_4:0,1,2,3,4,5,6,7"
-node_5_address="$node_5:0,1,2,3,4,5,6,7"
-node_6_address="$node_6:0,1,2,3,4,5,6,7"
-node_7_address="$node_7:0,1,2,3,4,5,6,7"
-node_8_address="$node_8:0,1,2,3,4,5,6,7"
-node_9_address="$node_9:0,1,2,3,4,5,6,7"
-node_10_address="$node_10:0,1,2,3,4,5,6,7"
-node_11_address="$node_11:0,1,2,3,4,5,6,7"
-node_12_address="$node_12:0,1,2,3,4,5,6,7"
-gpu_address="$node_1_address@$node_2_address@$node_3_address@$node_5_address@$node_6_address@$node_7_address@$node_8_address@$node_9_address@$node_10_address@$node_11_address@$node_12_address"
-
-master_port=2223
+CONDA_BIN=/data/anaconda3/condabin/conda
+CONDA_ENV=feb_platform
 
 # run
-export NPROC_PER_NODE=8; llamafactory-cli train_ds $config_yaml
-# CMD="export HOST_FILE=$hostfile; export GPU_ADDRESS=$gpu_address; export MASTER_PORT=$master_port; llamafactory-cli train_ds $config_yaml"
-# CMD="llamafactory-cli train $config_yaml"
+WORK_DIR=/mnt/ceph/licheng/training_scripts/
+# export NPROC_PER_NODE=8; llamafactory-cli train $config_yaml
+bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV

@@ -1,0 +1,12 @@
+ps -def |grep 'feb_platform' |cut -c 9-16| xargs kill -9
+ssh dfo@10.10.1.12 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.13 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+# ssh dfo@10.10.1.14 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.15 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.16 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.17 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.18 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.19 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.20 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.21 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+ssh dfo@10.10.1.22 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
