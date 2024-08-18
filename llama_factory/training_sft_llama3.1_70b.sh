@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2408_v1
+job_name=ray_gpt_2408_v1_4096
 task_name=sft_mix
 
 
@@ -25,8 +25,8 @@ BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240815/
 
 
 # config param
-model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
-deepspeed_config=llama_factory/deepspeed/ds_z1_bf16.json
+model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-70B-Instruct
+deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
@@ -119,4 +119,4 @@ CONDA_ENV=feb_platform
 # run
 WORK_DIR=/mnt/ceph/licheng/training_scripts/
 # export NPROC_PER_NODE=8; llamafactory-cli train $config_yaml
-bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV
+nohup bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV >> $logfile 2>&1 &
