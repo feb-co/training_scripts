@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2408_v1_4096
+job_name=ray_gpt_2408_v1_8192
 task_name=sft_mix
 
 
@@ -21,16 +21,18 @@ fi
 # dataset
 DATA_NAME=ray,general,system,pretrain_ray_4096,pretrain_general_4096
 RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240815/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240815/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240815_8192/
 
 
 # config param
-model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-70B-Instruct
-deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
+# model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-70B-Instruct
+model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2408_v1_4096
+deepspeed_config=llama_factory/deepspeed/ds_z3_bf16_cpuoffload.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
 model_name_or_path: $model_name
+resume_from_checkpoint: false
 
 ### method
 stage: sft_mix
@@ -44,7 +46,7 @@ dataset_dir: $RAW_DATA_PATH
 tokenized_path: $BIN_DATA_PATH
 packing: true
 template: llama3
-cutoff_len: 4096
+cutoff_len: 8192
 # max_samples: 2000
 overwrite_cache: true
 preprocessing_num_workers: 16
@@ -53,7 +55,7 @@ neat_packing: true
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 300
+save_steps: 100
 plot_loss: true
 overwrite_output_dir: true
 
@@ -64,8 +66,8 @@ disable_tqdm: true
 ### train
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 2
-learning_rate: 5.0e-6
-num_train_epochs: 3.0
+learning_rate: 1.0e-6
+num_train_epochs: 1.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
 adam_beta2: 0.95
@@ -119,4 +121,5 @@ CONDA_ENV=feb_platform
 # run
 WORK_DIR=/mnt/ceph/licheng/training_scripts/
 # export NPROC_PER_NODE=8; llamafactory-cli train $config_yaml
+# bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV
 nohup bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV >> $logfile 2>&1 &
