@@ -27,7 +27,7 @@ BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240815_dpo/
 # config param
 # model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
 model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2408_v1_8192/checkpoint-300
-deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
+deepspeed_config=llama_factory/deepspeed/ds_z3_bf16_cpuoffload.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
