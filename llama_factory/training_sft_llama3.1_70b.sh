@@ -4,11 +4,11 @@
 # task param
 model_name=llama3.1_70b
 job_name=ray_gpt_2408_v1_8192
-task_name=sft_mix
+task_name=sft
 
 
 # dir param
-TRAINING_PATH=/mnt/ceph/licheng/chat_model/sft/$model_name/$job_name
+TRAINING_PATH=/mnt/ceph/licheng/chat_model/$task_name/$model_name/$job_name
 TIME=$(date "+%Y-%m-%d_%H:%M:%S")
 logfile=${TRAINING_PATH}/${TIME}.log
 echo $TIME
@@ -62,6 +62,8 @@ overwrite_output_dir: true
 ### Transformers Trainer Arguments
 weight_decay: 1.0e-6
 disable_tqdm: true
+report_to: wandb
+run_name: $job_name
 
 ### train
 per_device_train_batch_size: 2
@@ -97,6 +99,8 @@ NCCL_DEBUG=WARN
 LD_LIBRARY_PATH=/home/dfo/.conda/envs/feb_platform/lib/python3.8/site-packages/torch/lib/:/home/dfo/.conda/envs/feb_platform/lib
 TORCH_EXTENSIONS_DIR=/mnt/ceph/.cache/torch_extensions/py311_cu121
 CUDA_HOME=/home/dfo/.conda/envs/feb_platform/
+WANDB_PROJECT=RayGPT-SFT
+WANDB_API_KEY=88355d52cb266f0b6e6a93bb08e01c22eb090584
 EOT
 
 NUM_NODES=11
