@@ -20,8 +20,8 @@ fi
 
 # dataset
 DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_4096,pretrain_general_4096,inspretrain_4096
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240909/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240909/
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240912/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912/
 
 
 # config param
