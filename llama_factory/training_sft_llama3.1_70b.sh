@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2409_v1_4096
+job_name=ray_gpt_2409_v1_8192
 task_name=sft
 
 
@@ -19,15 +19,15 @@ fi
 
 
 # dataset
-DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_4096,pretrain_general_4096,inspretrain_4096
+DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_8192,pretrain_general_8192,inspretrain_8192
 RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240912/
 BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912/
 
 
 # config param
-model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-70B-Instruct
-# model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2408_v1_4096
-deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
+# model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-70B-Instruct
+model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2409_v1_4096
+deepspeed_config=llama_factory/deepspeed/ds_z3_bf16_cpuoffload.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
@@ -45,7 +45,7 @@ dataset: $DATA_NAME
 dataset_dir: $RAW_DATA_PATH
 tokenized_path: $BIN_DATA_PATH
 template: llama3
-cutoff_len: 4096
+cutoff_len: 8192
 # max_samples: 2000
 overwrite_cache: true
 preprocessing_num_workers: 16
@@ -55,7 +55,7 @@ neat_packing: true
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 300
+save_steps: 150
 plot_loss: true
 overwrite_output_dir: true
 
@@ -68,8 +68,8 @@ run_name: $job_name
 ### train
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 3
-learning_rate: 5.0e-6
-num_train_epochs: 3.0
+learning_rate: 1.0e-6
+num_train_epochs: 1.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
 adam_beta2: 0.95
