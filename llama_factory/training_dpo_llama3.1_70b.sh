@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2408_v1
+job_name=ray_gpt_2409_v1
 task_name=dpo
 
 
@@ -20,13 +20,13 @@ fi
 
 # dataset
 DATA_NAME=ray_dpo,general_dpo
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240815/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240815_dpo/
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240912/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_dpo/
 
 
 # config param
 # model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
-model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2408_v1_8192/checkpoint-300
+model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2409_v1_8192
 deepspeed_config=llama_factory/deepspeed/ds_z3_bf16_cpuoffload.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
@@ -67,12 +67,12 @@ run_name: $job_name
 
 ### train
 pref_loss: sigmoid
-pref_beta: 0.3
+pref_beta: 0.1
 dpo_label_smoothing: 0.1
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 2
-learning_rate: 5.0e-7
-num_train_epochs: 2.0
+learning_rate: 1.0e-6
+num_train_epochs: 3.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
 adam_beta2: 0.95
