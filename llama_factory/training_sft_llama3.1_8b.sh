@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_8b
-job_name=ray_gpt_2409_v1_4096_lora_all_rank128_mix
+job_name=ray_gpt_2409_v1_4096_full
 task_name=sft
 
 
@@ -25,7 +25,6 @@ BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_4096/
 
 
 # config param
-# adapter_name_or_path: None
 model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
 deepspeed_config=llama_factory/deepspeed/ds_z1_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
@@ -37,11 +36,7 @@ resume_from_checkpoint: false
 ### method
 stage: sft_mix
 do_train: true
-finetuning_type: lora
-lora_target: q_proj,k_proj,v_proj,o_proj
-additional_target: gate_proj,up_proj,down_proj
-lora_rank: 128
-lora_dropout: 0.0
+finetuning_type: full
 deepspeed: $deepspeed_config
 
 ### dataset
@@ -72,7 +67,7 @@ run_name: $job_name
 ### train
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 3
-learning_rate: 5.0e-5
+learning_rate: 5.0e-6
 num_train_epochs: 3.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
