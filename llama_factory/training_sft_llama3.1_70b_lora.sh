@@ -2,8 +2,8 @@
 
 
 # task param
-model_name=llama3.1_8b
-job_name=ray_gpt_2409_v1_4096_full
+model_name=llama3.1_70b
+job_name=ray_gpt_2409_v1_4096_lora_mix_rank32
 task_name=sft
 
 
@@ -25,8 +25,8 @@ BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_4096/
 
 
 # config param
-model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
-deepspeed_config=llama_factory/deepspeed/ds_z1_bf16.json
+model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-70B-Instruct
+deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
@@ -36,7 +36,11 @@ resume_from_checkpoint: false
 ### method
 stage: sft_mix
 do_train: true
-finetuning_type: full
+finetuning_type: lora
+lora_target: q_proj,k_proj,v_proj,o_proj
+additional_target: gate_proj,up_proj,down_proj
+lora_rank: 32
+lora_dropout: 0.0
 deepspeed: $deepspeed_config
 
 ### dataset
@@ -54,9 +58,12 @@ neat_packing: true
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 2000
+save_steps: 1000
 plot_loss: true
 overwrite_output_dir: true
+
+### kernel
+enable_liger_kernel: false
 
 ### Transformers Trainer Arguments
 weight_decay: 1.0e-6

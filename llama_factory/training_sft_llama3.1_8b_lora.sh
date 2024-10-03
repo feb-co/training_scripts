@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_8b
-job_name=ray_gpt_2409_v1_4096_lora_all_rank128_mix
+job_name=ray_gpt_2409_v1_4096_lora_mix_rank32_lb
 task_name=sft
 
 
@@ -40,7 +40,7 @@ do_train: true
 finetuning_type: lora
 lora_target: q_proj,k_proj,v_proj,o_proj
 additional_target: gate_proj,up_proj,down_proj
-lora_rank: 128
+lora_rank: 32
 lora_dropout: 0.0
 deepspeed: $deepspeed_config
 
@@ -59,7 +59,7 @@ neat_packing: true
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 900
+save_steps: 2000
 plot_loss: true
 overwrite_output_dir: true
 
@@ -71,9 +71,9 @@ run_name: $job_name
 
 ### train
 per_device_train_batch_size: 2
-gradient_accumulation_steps: 3
-learning_rate: 5.0e-5
-num_train_epochs: 3.0
+gradient_accumulation_steps: 1
+learning_rate: 5.0e-6
+num_train_epochs: 2.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
 adam_beta2: 0.95
