@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2409_v1_4096_lora_mix_rank32
+job_name=ray_gpt_2410_v1_4096_lora_mix_rank32
 task_name=sft
 
 
@@ -19,9 +19,9 @@ fi
 
 
 # dataset
-DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_4096,pretrain_general_4096,inspretrain_4096
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240912/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_4096/
+DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_4096,pretrain_general_4096
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20241004/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20241004_4096/
 
 
 # config param
@@ -75,7 +75,7 @@ run_name: $job_name
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 1
 learning_rate: 5.0e-6
-num_train_epochs: 2.0
+num_train_epochs: 3.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
 adam_beta2: 0.95
