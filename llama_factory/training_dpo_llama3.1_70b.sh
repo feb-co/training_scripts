@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2409_v1
+job_name=ray_gpt_2410_v1
 task_name=dpo
 
 
@@ -26,8 +26,8 @@ BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_dpo/
 
 # config param
 # model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
-model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2409_v1_8192
-deepspeed_config=llama_factory/deepspeed/ds_z3_bf16_cpuoffload.json
+model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2410_v2_8192_lora_mix_rank32/epoch/checkpoint-epoch3
+deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
@@ -55,7 +55,7 @@ neat_packing: false
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 100
+save_steps: 300
 plot_loss: true
 overwrite_output_dir: true
 
@@ -69,7 +69,7 @@ run_name: $job_name
 pref_loss: sigmoid
 pref_beta: 0.1
 dpo_label_smoothing: 0.1
-per_device_train_batch_size: 2
+per_device_train_batch_size: 1
 gradient_accumulation_steps: 2
 learning_rate: 1.0e-6
 num_train_epochs: 3.0
@@ -106,7 +106,7 @@ WANDB_PROJECT=RayGPT-DPO
 WANDB_API_KEY=88355d52cb266f0b6e6a93bb08e01c22eb090584
 EOT
 
-NUM_NODES=11
+NUM_NODES=10
 hostfile=$TRAINING_PATH/hostfile
 cat << EOF > $hostfile
 10.10.1.11
@@ -118,7 +118,6 @@ dfo@10.10.1.17
 dfo@10.10.1.18
 dfo@10.10.1.19
 dfo@10.10.1.20
-dfo@10.10.1.21
 dfo@10.10.1.22
 EOF
 
