@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2410_v1
+job_name=ray_gpt_2410_v1_lora
 task_name=dpo
 
 
@@ -37,7 +37,10 @@ resume_from_checkpoint: false
 ### method
 stage: dpo
 do_train: true
-finetuning_type: full
+finetuning_type: lora
+lora_target: all
+lora_rank: 32
+lora_dropout: 0.0
 deepspeed: $deepspeed_config
 
 ### dataset
@@ -69,9 +72,9 @@ run_name: $job_name
 pref_loss: sigmoid
 pref_beta: 0.1
 dpo_label_smoothing: 0.1
-per_device_train_batch_size: 1
-gradient_accumulation_steps: 2
-learning_rate: 1.0e-6
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 1
+learning_rate: 5.0e-6
 num_train_epochs: 3.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
