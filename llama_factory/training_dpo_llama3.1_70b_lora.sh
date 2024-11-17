@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_70b
-job_name=ray_gpt_2410_v1_lora
+job_name=ray_gpt_2411_v1_lora
 task_name=dpo
 
 
@@ -20,13 +20,13 @@ fi
 
 # dataset
 DATA_NAME=ray_dpo,general_dpo
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240912/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_dpo/
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20241112
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20241112_dpo/
 
 
 # config param
 # model_name=/mnt/ceph/huggingface/Meta-Llama-3.1-8B-Instruct
-model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2410_v2_8192_lora_mix_rank32/epoch/checkpoint-epoch3
+model_name=/mnt/ceph/licheng/chat_model/sft/llama3.1_70b/ray_gpt_2411_v1_8192_lora_mix_rank32/epoch/checkpoint-epoch3
 deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
@@ -58,7 +58,7 @@ neat_packing: false
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 400
+save_steps: 500
 plot_loss: true
 overwrite_output_dir: true
 
