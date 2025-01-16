@@ -2,9 +2,9 @@
 
 
 # task param
-model_name=llama3.1_8b
-job_name=ray_gpt_241225_v2_8192_lora_mix_rank32
-task_name=sft
+model_name=llama3.1_tts_8b
+job_name=tts_2501_v1
+task_name=tts
 
 
 # dir param
@@ -19,29 +19,25 @@ fi
 
 
 # dataset
-DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_8192,pretrain_general_8192
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20241218_8192/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20241218_8192/
+DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_4096,pretrain_general_4096,inspretrain_4096
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240912/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_4096/
 
 
 # config param
-# adapter_name_or_path: None
-model_name=/mnt/ceph/ronghao/chat_model/sft/llama3.1_8b/raygpt_8b_sft1_1225/checkpoint-5848
+model_name=/mnt/ceph/licheng/avater_voice/model/llama_tts
 deepspeed_config=llama_factory/deepspeed/ds_z1_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
 ### model
 model_name_or_path: $model_name
 resume_from_checkpoint: false
+trust_remote_code: true
 
 ### method
-stage: sft_mix
+stage: sft_mix_voice
 do_train: true
-finetuning_type: lora
-lora_target: q_proj,k_proj,v_proj,o_proj
-additional_target: gate_proj,up_proj,down_proj
-lora_rank: 32
-lora_dropout: 0.0
+finetuning_type: full
 deepspeed: $deepspeed_config
 
 ### dataset
@@ -49,7 +45,7 @@ dataset: $DATA_NAME
 dataset_dir: $RAW_DATA_PATH
 tokenized_path: $BIN_DATA_PATH
 template: llama3
-cutoff_len: 8192
+cutoff_len: 4096
 # max_samples: 2000
 overwrite_cache: true
 preprocessing_num_workers: 16
@@ -59,7 +55,7 @@ neat_packing: true
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 2100
+save_steps: 2000
 plot_loss: true
 overwrite_output_dir: true
 
@@ -72,8 +68,8 @@ run_name: $job_name
 ### train
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 1
-learning_rate: 1.0e-6
-num_train_epochs: 1.0
+learning_rate: 5.0e-6
+num_train_epochs: 2.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
 adam_beta2: 0.95
