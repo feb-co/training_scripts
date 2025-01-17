@@ -19,13 +19,13 @@ fi
 
 
 # dataset
-DATA_NAME=ray,general_chat,general_task,system,pretrain_ray_4096,pretrain_general_4096,inspretrain_4096
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20240912/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20240912_4096/
+DATA_NAME=tts
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_audio_test/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_audio_test/
 
 
 # config param
-model_name=/mnt/ceph/licheng/avater_voice/model/llama_tts
+model_name=/mnt/ceph/licheng/avater_voice/model/llama_tts_8B
 deepspeed_config=llama_factory/deepspeed/ds_z1_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
@@ -33,6 +33,7 @@ cat <<EOT > $config_yaml
 model_name_or_path: $model_name
 resume_from_checkpoint: false
 trust_remote_code: true
+train_from_scratch: true
 
 ### method
 stage: sft_mix_voice
@@ -123,6 +124,6 @@ CONDA_ENV=feb_platform
 
 # run
 WORK_DIR=/mnt/ceph/licheng/training_scripts/
-# export NPROC_PER_NODE=8; llamafactory-cli train $config_yaml
+export NPROC_PER_NODE=8; llamafactory-cli train $config_yaml
 # bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV
-nohup bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV >> $logfile 2>&1 &
+# nohup bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV >> $logfile 2>&1 &
