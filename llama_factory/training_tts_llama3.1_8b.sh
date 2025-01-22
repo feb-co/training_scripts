@@ -46,7 +46,7 @@ dataset: $DATA_NAME
 dataset_dir: $RAW_DATA_PATH
 tokenized_path: $BIN_DATA_PATH
 template: llama3
-cutoff_len: 4096
+cutoff_len: 2048
 # max_samples: 2000
 overwrite_cache: true
 preprocessing_num_workers: 16

@@ -69,6 +69,7 @@ report_to: wandb
 run_name: $job_name
 
 ### train
+flash_attn: fa2
 pref_loss: sigmoid
 pref_beta: 0.1
 dpo_label_smoothing: 0.1

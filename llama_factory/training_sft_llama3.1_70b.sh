@@ -66,6 +66,7 @@ report_to: wandb
 run_name: $job_name
 
 ### train
+flash_attn: fa2
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 3
 learning_rate: 1.0e-6
