@@ -10,3 +10,17 @@ ssh dfo@10.10.1.19 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
 ssh dfo@10.10.1.20 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
 # ssh dfo@10.10.1.21 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
 ssh dfo@10.10.1.22 'ps -def |grep feb_platform |cut -c 9-16| xargs kill -9'
+
+
+# rm /home/dfo/.cache/whisper/small.pt
+# ssh dfo@10.10.1.12 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.13 'rm /home/dfo/.cache/whisper/small.pt'
+# # ssh dfo@10.10.1.14 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.15 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.16 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.17 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.18 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.19 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.20 'rm /home/dfo/.cache/whisper/small.pt'
+# # ssh dfo@10.10.1.21 'rm /home/dfo/.cache/whisper/small.pt'
+# ssh dfo@10.10.1.22 'rm /home/dfo/.cache/whisper/small.pt'

@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.1_tts_8b
-job_name=tts_2501_v1
+job_name=tts_2501_synthesis_from_sft_1kh
 task_name=tts
 
 
@@ -20,8 +20,8 @@ fi
 
 # dataset
 DATA_NAME=tts
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_audio_test/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_audio_test/
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_tts_synthesis/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_tts_synthesis_1kh/
 
 
 # config param
@@ -46,7 +46,7 @@ dataset: $DATA_NAME
 dataset_dir: $RAW_DATA_PATH
 tokenized_path: $BIN_DATA_PATH
 template: llama3
-cutoff_len: 2048
+cutoff_len: 1024
 # max_samples: 2000
 overwrite_cache: true
 preprocessing_num_workers: 16
@@ -56,7 +56,7 @@ neat_packing: true
 ### output
 output_dir: $TRAINING_PATH
 logging_steps: 1
-save_steps: 2000
+save_steps: 6000
 plot_loss: true
 overwrite_output_dir: true
 
@@ -67,10 +67,11 @@ report_to: wandb
 run_name: $job_name
 
 ### train
+flash_attn: fa2
 per_device_train_batch_size: 2
 gradient_accumulation_steps: 1
-learning_rate: 5.0e-6
-num_train_epochs: 2.0
+learning_rate: 2.0e-4
+num_train_epochs: 12.0
 lr_scheduler_type: cosine
 adam_beta1: 0.9
 adam_beta2: 0.95
@@ -97,9 +98,9 @@ NCCL_IB_GID_INDEX=3
 NCCL_IB_RETRY_CNT=28
 NCCL_IB_TIMEOUT=22
 NCCL_DEBUG=WARN
-LD_LIBRARY_PATH=/home/dfo/.conda/envs/feb_platform/lib/python3.8/site-packages/torch/lib/:/home/dfo/.conda/envs/feb_platform/lib
+LD_LIBRARY_PATH=/home/dfo/.conda/envs/feb_platform_voice/lib/python3.11/site-packages/torch/lib/:/home/dfo/.conda/envs/feb_platform_voice/lib
 TORCH_EXTENSIONS_DIR=/mnt/ceph/.cache/torch_extensions/py311_cu121
-CUDA_HOME=/home/dfo/.conda/envs/feb_platform/
+CUDA_HOME=/home/dfo/.conda/envs/feb_platform_voice/
 WANDB_PROJECT=RayGPT-SFT
 WANDB_API_KEY=88355d52cb266f0b6e6a93bb08e01c22eb090584
 EOT
@@ -120,10 +121,10 @@ dfo@10.10.1.22
 EOF
 
 CONDA_BIN=/data/anaconda3/condabin/conda
-CONDA_ENV=feb_platform
+CONDA_ENV=feb_platform_voice
 
 # run
 WORK_DIR=/mnt/ceph/licheng/training_scripts/
-export NPROC_PER_NODE=8; llamafactory-cli train $config_yaml
+# export NPROC_PER_NODE=1; llamafactory-cli train $config_yaml
 # bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV
-# nohup bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV >> $logfile 2>&1 &
+nohup bash llama_factory/scripts/train_multi_node.sh $WORK_DIR $config_yaml $NUM_NODES $hostfile $ENV_FILE $CONDA_BIN $CONDA_ENV >> $logfile 2>&1 &

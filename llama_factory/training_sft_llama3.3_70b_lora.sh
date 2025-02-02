@@ -3,7 +3,7 @@
 
 # task param
 model_name=llama3.3_70b
-job_name=ray_gpt_2501_v1_8192_lora_mix_rank32
+job_name=ray_gpt_2501_v2_8192_lora_mix_rank32
 task_name=sft
 
 
@@ -20,13 +20,13 @@ fi
 
 # dataset
 DATA_NAME=ray_hardcode,ray_chat,ray_knowledge,ray_task,general_chat,general_task,system,pretrain_ray_8192,pretrain_general_8192
-RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20250115/
-BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20250115_8192/
+RAW_DATA_PATH=/mnt/ceph/licheng/data-text/train_data_20250127/
+BIN_DATA_PATH=/mnt/ceph/licheng/data-bin/train_data_20250127_8192/
 
 
 # config param
 # model_name=/mnt/ceph/huggingface/Llama-3.3-70B
-model_name=/mnt/ceph/licheng/chat_model/sft/llama3.3_70b/ray_gpt_2501_v1_4096_lora_mix_rank32/epoch/checkpoint-epoch2/
+model_name=/mnt/ceph/licheng/chat_model/sft/llama3.3_70b/ray_gpt_2501_v2_4096_lora_mix_rank32/epoch/checkpoint-epoch2/
 deepspeed_config=llama_factory/deepspeed/ds_z3_bf16.json
 config_yaml=$TRAINING_PATH/$task_name.yaml
 cat <<EOT > $config_yaml
